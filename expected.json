@@ -1,0 +1,39 @@
+{
+  "stack_bucket": "ruby-rails-postgres",
+  "stack_slug": "rails",
+  "external": {
+    "ai_source": "hand",
+    "complexity": "standard"
+  },
+  "must_find_issues": [
+    { "source": "regex", "title_contains": "secret" }
+  ],
+  "required_artifacts": [
+    "Dockerfile",
+    ".deviax/k8s/deployment.yaml",
+    ".deviax/k8s/service.yaml"
+  ],
+  "required_questions": [
+    "subdomain"
+  ],
+  "must_reach_phase": "live",
+  "assert": {
+    "outcome": "success",
+    "url_status_class": "2xx",
+    "url_status_after_1h": "not_5xx"
+  },
+  "budget": {
+    "max_ai_cost_usd": 1.50,
+    "max_duration_seconds": 1500,
+    "max_user_questions": 5
+  },
+  "seeded_problems": [
+    {
+      "file": "config/initializers/secret_key_base.rb",
+      "line": 5,
+      "type": "hardcoded_secret",
+      "marker_substring": "rails-blog-dev-only-secret-change-me-128-chars-or-more-for-rails"
+    }
+  ],
+  "notes": "Phase 2 — Rails 7.2 API mode + managed Postgres. Pipeline must provision Postgres, inject DATABASE_URL (Rails reads it natively via database.yml ERB), generate Dockerfile that runs `rails db:migrate` before `puma`. Rails has highest historical AI failure rate per §22 (60% baseline) — extra budget for retries."
+}
